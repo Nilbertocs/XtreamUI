@@ -62,6 +62,15 @@ function getStreamingServers() {
     return $return;
 }
 
+function getStreamingServersByID($rID) {
+    global $db;
+    $result = $db->query("SELECT * FROM `streaming_servers` WHERE `id` = ".intval($rID).";");
+    if (($result) && ($result->num_rows == 1)) {
+        return $result->fetch_assoc();
+    }
+    return False;
+}
+
 function getSettings() {
     global $db;
     $result = $db->query("SELECT * FROM `settings` LIMIT 1;");
@@ -383,6 +392,15 @@ function getChannels($rType="live") {
         }
     }
     return $return;
+}
+
+function getChannelsByID($rID) {
+    global $db;
+    $result = $db->query("SELECT * FROM `streams` WHERE `id` = ".intval($rID).";");
+    if (($result) && ($result->num_rows == 1)) {
+        return $result->fetch_assoc();
+    }
+    return False;
 }
 
 function getMag($rID) {

@@ -72,12 +72,12 @@
                     <div class="logo-box">
                         <a href="dashboard.php" class="logo text-center">
                             <span class="logo-lg">
-                                <img src="assets/images/logo-back.png" alt="" height="26">
+                                <img src="https://i.imgur.com/nMjL5IQ.png" alt="" height="26">
                                 <!-- <span class="logo-lg-text-dark">Upvex</span> -->
                             </span>
                             <span class="logo-sm">
                                 <!-- <span class="logo-sm-text-dark">X</span> -->
-                                <img src="assets/images/logo-back.png" alt="" height="28">
+                                <img src="https://i.imgur.com/nMjL5IQ.png" alt="" height="28">
                             </span>
                         </a>
                     </div>
@@ -132,7 +132,7 @@
                                     <li><a href="#">Manage Group Members <i class="la la-exclamation-triangle"></i></a></li>
                                     <li class="separator"></li>
                                     <li><a href="#">Client Logs <i class="la la-exclamation-triangle"></i></a></li>
-                                    <li><a href="#">User Activity <i class="la la-exclamation-triangle"></i></a></li>
+                                    <li><a href="./user_activity.php">User Activity</a></li>
                                 </ul>
                             </li>
                             

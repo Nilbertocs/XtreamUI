@@ -86,7 +86,8 @@ if ($_GET["id"] == "users") {
                 }
             }
         ),
-        array('db' => 'id', 'dt' => 9,
+        array('db' => 'admin_notes', 'dt' => 9),
+        array('db' => 'id', 'dt' => 10,
             'formatter' => function( $d, $row ) {
                 $rButtons = '<button type="button" class="btn btn-outline-secondary waves-effect waves-light btn-xs" onClick="download(\''.$row["username"].'\', \''.$row["password"].'\');""><i class="mdi mdi-download"></i></button>';
                 $rButtons .= '<a href="./user.php?id='.$d.'"><button type="button" class="btn btn-outline-info waves-effect waves-light btn-xs"><i class="mdi mdi-pencil-outline"></i></button></a>';

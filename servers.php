@@ -45,6 +45,7 @@ include "header.php";
                                             <th class="text-center">Status</th>
                                             <th>Domain Name</th>
                                             <th>Server IP</th>
+                                            <th>Server Port</th>
                                             <th class="text-center">Client Slots</th>
                                             <th>Operating System</th>
                                             <th class="text-center">Actions</th>
@@ -65,6 +66,7 @@ include "header.php";
                                             <td class="text-center" data-toggle="tooltip" data-placement="top" title="" data-original-title="<?=$rServerText?>" ><i class="<?php if ($rServer["status"] == 1) { echo "btn-outline-info"; } else { echo "btn-outline-danger"; } ?> mdi mdi-<?=Array(0 => "alarm-light-outline", 1 => "check-network", 2 => "alarm-light-outline")[$rServer["status"]]?>"></i></td>
                                             <td><?=$rServer["domain_name"]?></td>
                                             <td><?=$rServer["server_ip"]?></td>
+                                            <td><?=$rServer["http_broadcast_port"]?></td>
                                             <td class="text-center"><?=count(getConnections($rServer["id"]))?> / <?=$rServer["total_clients"]?></td>
                                             <td><?=$rServer["system_os"]?></td>
                                             <td class="text-center">

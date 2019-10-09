@@ -59,6 +59,7 @@ include "header.php";
                                             <th class="text-center">Expiration</th>
                                             <th class="text-center">Connections</th>
                                             <th class="text-center">Last Connection</th>
+                                            <th class="text-center">Notes</th>
                                             <th class="text-center">Actions</th>
                                         </tr>
                                     </thead>

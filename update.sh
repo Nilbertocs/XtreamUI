@@ -5,7 +5,7 @@ case "$REPLY" in
   y|Y )
     tput setaf 4 ; tput bold ;echo "Starting..."; tput sgr0;
     rm -r /home/xtreamcodes/iptv_xtream_codes/admin/*
-    wget https://github.com/Nilbertocs/XtreamUI/archive/master.zip -O /tmp/update.zip -o
+    wget https://github.com/Nilbertocs/XtreamUI/archive/master.zip -O /tmp/update.zip
     unzip /tmp/update.zip -d /tmp/update/
     mv /tmp/update/XtreamUI-master/* /home/xtreamcodes/iptv_xtream_codes/admin/
     rm /tmp/update.zip

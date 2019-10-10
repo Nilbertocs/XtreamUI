@@ -26,7 +26,7 @@ if ($_GET["id"] == "users") {
     $table = 'users';
     $get = $_GET["id"];
     $primaryKey = 'id';
-    $extraWhere = "`is_mag` = 0 AND `is_e2` = 0";
+    $extraWhere = "";
 
     $columns = array(
         array('db' => 'id', 'dt' => 0),
@@ -417,7 +417,7 @@ if ($_GET["id"] == "users") {
         array('db' => 'stream_display_name', 'dt' => 1),
         array('db' => 'id', 'dt' => 2,
             'formatter' => function( $d, $row) {
-                return '<a href="./movie.php?id='.$d.'"><button type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit Movie" class="btn btn-outline-info waves-effect waves-light btn-xs"><i class="mdi mdi-pencil-outline"></i></button></a>';
+                return '<a href="./addmovie.php?id='.$d.'"><button type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit Movie" class="btn btn-outline-info waves-effect waves-light btn-xs"><i class="mdi mdi-pencil-outline"></i></button></a>';
             }
         )
     );
@@ -442,8 +442,8 @@ if ($_GET["id"] == "users") {
         ),
         array('db' => 'id', 'dt' => 3,
             'formatter' => function( $d, $row) {
-                return '<button type="button" style="display: none;" class="btn-remove btn btn-outline-danger waves-effect waves-light btn-xs" onClick="toggleBouquet('.$d.', \'vod\');"><i class="mdi mdi-minus"></i></button>
-                <button type="button" style="display: none;" class="btn-add btn btn-outline-info waves-effect waves-light btn-xs" onClick="toggleBouquet('.$d.', \'vod\');"><i class="mdi mdi-plus"></i></button>';
+                return '<button type="button" style="display: none;" class="btn-remove btn btn-outline-danger waves-effect waves-light btn-xs" onClick="toggleBouquet('.$d.', \'stream\');"><i class="mdi mdi-minus"></i></button>
+                <button type="button" style="display: none;" class="btn-add btn btn-outline-info waves-effect waves-light btn-xs" onClick="toggleBouquet('.$d.', \'stream\');"><i class="mdi mdi-plus"></i></button>';
             }
         )
     );

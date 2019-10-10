@@ -161,7 +161,7 @@
                             <li class="has-submenu">
                                 <a href="#"> <i class="la la-video-camera"></i>VOD <div class="arrow-down"></div></a>
                                 <ul class="submenu">
-                                    <li><a href="#">Add Movie <i class="la la-exclamation-triangle"></i></a></li>
+                                    <li><a href="./addvod.php">Add Movie</a></li>
                                     <li><a href="#">Manage Movies <i class="la la-exclamation-triangle"></i></a></li>
                                     <li class="separator"></li>
                                     <li><a href="./movie_category.php">Add Movie Category</a></li>

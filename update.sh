@@ -7,6 +7,7 @@ case "$REPLY" in
     tput setaf 4 ; tput bold ;echo "Deleting Previous Files"; tput sgr0;
     rm -r /home/xtreamcodes/iptv_xtream_codes/admin/* 2> /dev/null
     tput setaf 4 ; tput bold ;echo "Downloading Update"; tput sgr0;
+    apt-get install unzip -y
     wget https://github.com/Nilbertocs/XtreamUI/archive/master.zip -O /tmp/update.zip -o /dev/null
     tput setaf 4 ; tput bold ;echo "Installing Update"; tput sgr0;
     unzip -qq /tmp/update.zip -d /tmp/update/

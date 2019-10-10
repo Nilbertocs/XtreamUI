@@ -15,4 +15,5 @@ case "$REPLY" in
 n|N ) echo "Stop Installation ..."; tput sgr0; ;;
 * ) echo "Type only Y or N";tput sgr0; ;;
 esac
+rm update.sh
 exit 0

@@ -64,7 +64,7 @@ body{
 #topnav .navbar-toggle span{
     height:2px;
     width:100%;
-    background-color:#6c757d;
+    background-color:#fff;
     display:block;
     margin-bottom:5px;
     -webkit-transition:-webkit-transform .5s ease;
@@ -438,7 +438,9 @@ body{
     padding-left:12px
 }
 .navbar-custom{
-    background-color:#fff;
+    background-size:cover;
+    background-position:center;
+    background-image:url(../images/bg.png);
     padding:0 10px 0 0;
     position:fixed;
     left:0;
@@ -3755,4 +3757,22 @@ body.authentication-bg-pattern{
 }
 .user-online {
     background: #C8E6C911;
+}
+.dashboard-tabs {
+    margin-top:25px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+}
+.dashboard-tabs::-webkit-scrollbar {
+    height: 2px;
+	background-color: #F5F5F5;
+}
+.dashboard-tabs::-webkit-scrollbar-thumb {
+    display:none;
+}
+.copyright a {
+    font-weight: bold;
+    color: white;
 }

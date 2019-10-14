@@ -27,15 +27,15 @@ include "header.php";
                                         <?php } ?>
                                     </li>
                                     <li>
-                                        <a href="reg_user.php">
+                                        <a href="user.php">
                                             <button type="button" class="btn btn-success waves-effect waves-light btn-sm">
-                                                <i class="mdi mdi-plus"></i> Add Registered User
+                                                <i class="mdi mdi-plus"></i> Add User
                                             </button>
                                         </a>
                                     </li>
                                 </ol>
                             </div>
-                            <h4 class="page-title">Registered Users</h4>
+                            <h4 class="page-title">User Activity</h4>
                         </div>
                     </div>
                 </div>     
@@ -50,14 +50,13 @@ include "header.php";
                                 <table id="datatable" class="table dt-responsive nowrap">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">ID</th>
-                                            <th>Username</th>
-                                            <th>Email</th>
-                                            <th class="text-center">IP</th>
-                                            <th class="text-center">Type</th>
                                             <th class="text-center">Status</th>
-                                            <th class="text-center">Verified</th>
-                                            <th class="text-center">Last Login</th>
+                                            <th>Username</th>
+                                            <th>Channel</th>
+                                            <th>Server</th>
+                                            <th class="text-center">IP</th>
+                                            <th class="text-center">Connections</th>
+                                            <th class="text-center">Country</th>
                                             <th class="text-center">Actions</th>
                                         </tr>
                                     </thead>
@@ -89,6 +88,7 @@ include "header.php";
         <!-- third party js -->
         <script src="assets/libs/datatables/jquery.dataTables.min.js"></script>
         <script src="assets/libs/datatables/dataTables.bootstrap4.js"></script>
+        <script src="assets/libs/select2/select2.min.js"></script>
         <script src="assets/libs/datatables/dataTables.responsive.min.js"></script>
         <script src="assets/libs/datatables/responsive.bootstrap4.min.js"></script>
         <script src="assets/libs/datatables/dataTables.buttons.min.js"></script>
@@ -106,20 +106,21 @@ include "header.php";
         <script>
         var autoRefresh = true;
         
-        function api(rID, rType) {
-            if (rType == "delete") {
-                if (confirm('Are you sure you want to delete this registered user?') == false) {
-                    return;
-                }
+        function toggleAuto() {
+            if (autoRefresh == true) {
+                autoRefresh = false;
+                $(".auto-text").html("Manual Mode");
+            } else {
+                autoRefresh = true;
+                $(".auto-text").html("Auto-Refresh");
             }
-            $.getJSON("./api.php?action=reg_user&sub=" + rType + "&user_id=" + rID, function(data) {
+        }
+        
+        function api(rID, rType) {
+            $.getJSON("./api.php?action=user_activity&sub=" + rType + "&pid=" + rID, function(data) {
                 if (data.result === true) {
-                    if (rType == "delete") {
-                        $.toast("User has been deleted.");
-                    } else if (rType == "enable") {
-                        $.toast("User has been enabled.");
-                    } else if (rType == "disable") {
-                        $.toast("User has been disabled.");
+                    if (rType == "kill") {
+                        $.toast("Connection has been killed.");
                     }
                     $.each($('.tooltip'), function (index, element) {
                         $(this).remove();
@@ -131,23 +132,14 @@ include "header.php";
             });
         }
         
-        function toggleAuto() {
-            if (autoRefresh == true) {
-                autoRefresh = false;
-                $(".auto-text").html("Manual Mode");
-            } else {
-                autoRefresh = true;
-                $(".auto-text").html("Auto-Refresh");
-            }
-        }
-        
         function reloadUsers() {
             if (autoRefresh == true) {
                 $("#datatable").DataTable().ajax.reload(null, false);
             }
-            setTimeout(reloadUsers, 5000);
+            setTimeout(reloadUsers, 2000);
         }
         $(document).ready(function() {
+            $('select').select2({width: '100%'});
             $("#datatable").DataTable({
                 language: {
                     paginate: {
@@ -159,20 +151,24 @@ include "header.php";
                     $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
                     $('[data-toggle="tooltip"]').tooltip();
                 },
-                createdRow: function(row, data, index) {
-                    $(row).addClass('user-' + data[0]);
-                },
                 responsive: false,
                 processing: true,
                 serverSide: true,
                 ajax: {
                     url: "./table.php",
                     "data": function(d) {
-                        d.id = "reg_users";
+                        d.id = "live_connections";
+                        <?php if (isset($_GET["server_id"])) { ?>
+                        d.server_id = <?=intval($_GET["server_id"])?>;
+                        <?php } else if (isset($_GET["stream_id"])) { ?>
+                        d.stream_id = <?=intval($_GET["stream_id"])?>;
+                        <?php } else if (isset($_GET["user_id"])) { ?>
+                        d.user_id = <?=intval($_GET["user_id"])?>;
+                        <?php } ?>
                     }
                 },
                 columnDefs: [
-                    {"className": "dt-center", "targets": [0,3,4,5,6,7,8]}
+                    {"className": "dt-center", "targets": [0,4,5,6,7]}
                 ],
             });
             <?php if (!$detect->isMobile()) { ?>

@@ -2,240 +2,418 @@
 include "functions.php";
 if (!isset($_SESSION['user_id'])) { header("Location: ./login.php"); exit; }
 include "header.php";
-
-if (isset($_GET["server_id"])) {
-    $rServerID = intval($_GET["server_id"]);
-}
 ?>        <div class="wrapper">
             <div class="container-fluid">
                 <!-- start page title -->
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box">
-                            <div class="page-title-right">
-                                <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><i class="mdi mdi-refresh"></i> Auto-Refresh</li>
-                                </ol>
-                            </div>
-                            <h4 class="page-title"><?php if (isset($rServerID)) { echo $rServers[$rServerID]["server_name"]; } else { echo "Server Overview"; } ?></h4> 
+                            
+                            <ul class="nav nav-tabs nav-bordered dashboard-tabs">
+                                <li class="nav-item">
+                                    <a data-id="home" href="#" class="nav-link active">
+                                        Overview
+                                    </a>
+                                </li>
+                                <?php foreach ($rServers as $rServer) { ?>
+                                <li class="nav-item">
+                                    <a data-id="<?=$rServer["id"]?>" href="#" class="nav-link">
+                                        <?=$rServer["server_name"]?>
+                                    </a>
+                                </li>
+                                <?php } ?>
+                            </ul>
                         </div>
                     </div>
                 </div>     
                 <!-- end page title --> 
 
-                <div class="row">
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card-box active-connections">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="avatar-sm bg-soft-purple rounded">
-                                        <i class="fe-zap avatar-title font-22 text-purple"></i>
+                <div class="tab-content">
+                    <div class="tab-pane show active" id="server-home">
+                        <div class="row">
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box active-connections">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-purple rounded">
+                                                <i class="fe-zap avatar-title font-22 text-purple"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span></h3>
+                                                <p class="text-muted mb-1 text-truncate">Open Connections</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-right">
-                                        <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span></h3>
-                                        <p class="text-muted mb-1 text-truncate">Open Connections</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php if (isset($rServerID)) { ?>
-                            <div class="mt-3">
-                                <h6 class="text-uppercase">Total Connections <span class="float-right entry-percentage">0</span></h6>
-                                <div class="progress progress-sm m-0">
-                                    <div class="progress-bar bg-purple" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-                                        <span class="sr-only">0%</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php } ?>
-                        </div> <!-- end card-box-->
-                    </div> <!-- end col -->
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
 
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card-box online-users">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="avatar-sm bg-soft-success rounded">
-                                        <i class="fe-users avatar-title font-22 text-success"></i>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box online-users">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-success rounded">
+                                                <i class="fe-users avatar-title font-22 text-success"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span></h3>
+                                                <p class="text-muted mb-1 text-truncate">Online Users</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-right">
-                                        <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span></h3>
-                                        <p class="text-muted mb-1 text-truncate">Online Users</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php if (isset($rServerID)) { ?>
-                            <div class="mt-3">
-                                <h6 class="text-uppercase">Total Active <span class="float-right entry-percentage">0</span></h6>
-                                <div class="progress progress-sm m-0">
-                                    <div class="progress-bar bg-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-                                        <span class="sr-only">0%</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php } ?>
-                        </div> <!-- end card-box-->
-                    </div> <!-- end col -->
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
 
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card-box input-flow">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="avatar-sm bg-soft-primary rounded">
-                                        <i class="fe-trending-down avatar-title font-22 text-primary"></i>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box input-flow">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-primary rounded">
+                                                <i class="fe-trending-down avatar-title font-22 text-primary"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span> <small>Mbps</small></h3>
+                                                <p class="text-muted mb-1 text-truncate">Input Flow</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-right">
-                                        <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span> <small>Mbps</small></h3>
-                                        <p class="text-muted mb-1 text-truncate">Input Flow</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php if (isset($rServerID)) { ?>
-                            <div class="mt-3">
-                                <h6 class="text-uppercase">Network Load <span class="float-right entry-percentage">0%</span></h6>
-                                <div class="progress progress-sm m-0">
-                                    <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-                                        <span class="sr-only">0%</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php } ?>
-                        </div> <!-- end card-box-->
-                    </div> <!-- end col -->
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
 
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card-box output-flow">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="avatar-sm bg-soft-info rounded">
-                                        <i class="fe-trending-up avatar-title font-22 text-info"></i>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box output-flow">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-info rounded">
+                                                <i class="fe-trending-up avatar-title font-22 text-info"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span> <small>Mbps</small></h3>
+                                                <p class="text-muted mb-1 text-truncate">Output Flow</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-right">
-                                        <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span> <small>Mbps</small></h3>
-                                        <p class="text-muted mb-1 text-truncate">Output Flow</p>
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
+                            
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box active-streams">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-purple rounded">
+                                                <i class="fe-arrow-up-right avatar-title font-22 text-purple"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span></h3>
+                                                <p class="text-muted mb-1 text-truncate">Active Streams</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <?php if (isset($rServerID)) { ?>
-                            <div class="mt-3">
-                                <h6 class="text-uppercase">Network Load <span class="float-right entry-percentage">0%</span></h6>
-                                <div class="progress progress-sm m-0">
-                                    <div class="progress-bar bg-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-                                        <span class="sr-only">0%</span>
+                                    <div class="mt-3">
+                                        <h6 class="text-uppercase">Total Streams <span class="float-right entry-percentage">0</span></h6>
+                                        <div class="progress progress-sm m-0">
+                                            <div class="progress-bar bg-purple" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                <span class="sr-only">0%</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <?php } ?>
-                        </div> <!-- end card-box-->
-                    </div> <!-- end col -->
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
+
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box cpu-usage">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-success rounded">
+                                                <i class="fe-cpu avatar-title font-22 text-success"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span><small>%</small></h3>
+                                                <p class="text-muted mb-1 text-truncate">Avg CPU Usage</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6 class="text-uppercase">&nbsp;</h6>
+                                        <div class="progress progress-sm m-0">
+                                            <div class="progress-bar bg-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                <span class="sr-only">0%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
+
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box mem-usage">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-primary rounded">
+                                                <i class="fe-terminal avatar-title font-22 text-primary"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span><small>%</small></h3>
+                                                <p class="text-muted mb-1 text-truncate">Avg Memory Usage</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6 class="text-uppercase">&nbsp;</h6>
+                                        <div class="progress progress-sm m-0">
+                                            <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                <span class="sr-only">0%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
+                           
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box uptime">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-info rounded">
+                                                <i class="fe-power avatar-title font-22 text-info"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1 entry">--</h3>
+                                                <p class="text-muted mb-1 text-truncate">System Uptime</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6 class="text-uppercase">&nbsp;</span></h6>
+                                        <div class="progress-sm m-0"></div>
+                                    </div>
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
+
+                        </div>
+                    </div>
                     
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card-box active-streams">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="avatar-sm bg-soft-purple rounded">
-                                        <i class="fe-arrow-up-right avatar-title font-22 text-purple"></i>
+                    <div class="tab-pane tab-pane-server" id="server-tab">
+                        <div class="row">
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box active-connections">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-purple rounded">
+                                                <i class="fe-zap avatar-title font-22 text-purple"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span></h3>
+                                                <p class="text-muted mb-1 text-truncate">Open Connections</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-right">
-                                        <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span></h3>
-                                        <p class="text-muted mb-1 text-truncate">Active Streams</p>
+                                    <div class="mt-3">
+                                        <h6 class="text-uppercase">Total Connections <span class="float-right entry-percentage">0</span></h6>
+                                        <div class="progress progress-sm m-0">
+                                            <div class="progress-bar bg-purple" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                <span class="sr-only">0%</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                <h6 class="text-uppercase">Total Streams <span class="float-right entry-percentage">0</span></h6>
-                                <div class="progress progress-sm m-0">
-                                    <div class="progress-bar bg-purple" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-                                        <span class="sr-only">0%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> <!-- end card-box-->
-                    </div> <!-- end col -->
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
 
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card-box cpu-usage">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="avatar-sm bg-soft-success rounded">
-                                        <i class="fe-cpu avatar-title font-22 text-success"></i>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box online-users">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-success rounded">
+                                                <i class="fe-users avatar-title font-22 text-success"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span></h3>
+                                                <p class="text-muted mb-1 text-truncate">Online Users</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-right">
-                                        <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span><small>%</small></h3>
-                                        <p class="text-muted mb-1 text-truncate"><?php if (!isset($rServerID)) { echo "Avg "; }?>CPU Usage</p>
+                                    <div class="mt-3">
+                                        <h6 class="text-uppercase">Total Active <span class="float-right entry-percentage">0</span></h6>
+                                        <div class="progress progress-sm m-0">
+                                            <div class="progress-bar bg-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                <span class="sr-only">0%</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                <h6 class="text-uppercase">&nbsp;</h6>
-                                <div class="progress progress-sm m-0">
-                                    <div class="progress-bar bg-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-                                        <span class="sr-only">0%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> <!-- end card-box-->
-                    </div> <!-- end col -->
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
 
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card-box mem-usage">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="avatar-sm bg-soft-primary rounded">
-                                        <i class="fe-terminal avatar-title font-22 text-primary"></i>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box input-flow">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-primary rounded">
+                                                <i class="fe-trending-down avatar-title font-22 text-primary"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span> <small>Mbps</small></h3>
+                                                <p class="text-muted mb-1 text-truncate">Input Flow</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-right">
-                                        <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span><small>%</small></h3>
-                                        <p class="text-muted mb-1 text-truncate"><?php if (!isset($rServerID)) { echo "Avg "; }?>Memory Usage</p>
+                                    <div class="mt-3">
+                                        <h6 class="text-uppercase">Network Load <span class="float-right entry-percentage">0%</span></h6>
+                                        <div class="progress progress-sm m-0">
+                                            <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                <span class="sr-only">0%</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                <h6 class="text-uppercase">&nbsp;</h6>
-                                <div class="progress progress-sm m-0">
-                                    <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-                                        <span class="sr-only">0%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> <!-- end card-box-->
-                    </div> <!-- end col -->
-                   
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card-box uptime">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="avatar-sm bg-soft-info rounded">
-                                        <i class="fe-power avatar-title font-22 text-info"></i>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-right">
-                                        <h3 class="text-dark my-1 entry">--</h3>
-                                        <p class="text-muted mb-1 text-truncate">System Uptime</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                <h6 class="text-uppercase">&nbsp;</span></h6>
-                                <div class="progress-sm m-0"></div>
-                            </div>
-                        </div> <!-- end card-box-->
-                    </div> <!-- end col -->
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
 
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box output-flow">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-info rounded">
+                                                <i class="fe-trending-up avatar-title font-22 text-info"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span> <small>Mbps</small></h3>
+                                                <p class="text-muted mb-1 text-truncate">Output Flow</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6 class="text-uppercase">Network Load <span class="float-right entry-percentage">0%</span></h6>
+                                        <div class="progress progress-sm m-0">
+                                            <div class="progress-bar bg-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                <span class="sr-only">0%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
+                            
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box active-streams">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-purple rounded">
+                                                <i class="fe-arrow-up-right avatar-title font-22 text-purple"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span></h3>
+                                                <p class="text-muted mb-1 text-truncate">Active Streams</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6 class="text-uppercase">Total Streams <span class="float-right entry-percentage">0</span></h6>
+                                        <div class="progress progress-sm m-0">
+                                            <div class="progress-bar bg-purple" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                <span class="sr-only">0%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
+
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box cpu-usage">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-success rounded">
+                                                <i class="fe-cpu avatar-title font-22 text-success"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span><small>%</small></h3>
+                                                <p class="text-muted mb-1 text-truncate">CPU Usage</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6 class="text-uppercase">&nbsp;</h6>
+                                        <div class="progress progress-sm m-0">
+                                            <div class="progress-bar bg-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                <span class="sr-only">0%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
+
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box mem-usage">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-primary rounded">
+                                                <i class="fe-terminal avatar-title font-22 text-primary"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1"><span data-plugin="counterup" class="entry">0</span><small>%</small></h3>
+                                                <p class="text-muted mb-1 text-truncate">Memory Usage</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6 class="text-uppercase">&nbsp;</h6>
+                                        <div class="progress progress-sm m-0">
+                                            <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                                <span class="sr-only">0%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
+                           
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card-box uptime">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="avatar-sm bg-soft-info rounded">
+                                                <i class="fe-power avatar-title font-22 text-info"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-right">
+                                                <h3 class="text-dark my-1 entry">--</h3>
+                                                <p class="text-muted mb-1 text-truncate">System Uptime</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6 class="text-uppercase">&nbsp;</span></h6>
+                                        <div class="progress-sm m-0"></div>
+                                    </div>
+                                </div> <!-- end card-box-->
+                            </div> <!-- end col -->
+
+                        </div>
+                    </div>
                 </div>
                 <!-- end row -->
                
@@ -247,7 +425,7 @@ if (isset($_GET["server_id"])) {
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-12  text-center">Xtream Codes - Admin UI</div>
+                    <div class="col-md-12 copyright text-center"><?=getFooter()?></div>
                 </div>
             </div>
         </footer>
@@ -274,9 +452,16 @@ if (isset($_GET["server_id"])) {
         <script src="assets/js/app.min.js"></script>
         
         <script>
+        rServerID = "home";
+        
         function getStats() {
             var rStart = Date.now();
-            $.getJSON("./api.php?action=stats<?php if (isset($rServerID)) { echo "&server_id=".$rServerID; } ?>", function(data) {
+            if (window.rServerID == "home") {
+                rURL = "./api.php?action=stats";
+            } else {
+                rURL = "./api.php?action=stats&server_id=" + window.rServerID;
+            }
+            $.getJSON(rURL, function(data) {
                 // Open Connections
                 var rCapacity = Math.ceil((data.open_connections / data.total_connections) * 100);
                 if (isNaN(rCapacity)) { rCapacity = 0; }
@@ -340,6 +525,26 @@ if (isset($_GET["server_id"])) {
                 setTimeout(getStats, 1000);
             });
         }
+        
+        $('.nav-link').on('click', function (e) {
+            window.rServerID = $(e.target).data("id");
+            getStats();
+            $(".nav-link").each(function() {
+                $(this).removeClass("active");
+            });
+            $(e.target).addClass("active");
+            if (window.rServerID == "home") {
+                if (!$("#server-home").is(":visible")) {
+                    $("#server-tab").hide();
+                    $("#server-home").show();
+                }
+            } else {
+                if (!$("#server-tab").is(":visible")) {
+                    $("#server-home").hide();
+                    $("#server-tab").show();
+                }
+            }
+        });
         
         $(document).ready(function() {
             getStats();

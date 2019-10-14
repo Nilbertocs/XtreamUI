@@ -47,6 +47,25 @@ if (isset($_GET["action"])) {
         } else if ($rSub == "unban") {
             $db->query("UPDATE `users` SET `admin_enabled` = 1 WHERE `id` = ".$db->real_escape_string($rUserID).";");
             echo json_encode(Array("result" => True));exit;
+        } else if ($rSub == "kill") {
+            $rResult = $db->query("SELECT `pid` FROM `user_activity_now` WHERE `user_id` = ".$db->real_escape_string($rUserID).";");
+            if (($rResult) && ($rResult->num_rows > 0)) {
+                while ($rRow = $rResult->fetch_assoc()) {
+                    exec("kill -9 ".$rRow["pid"]);
+                }
+            }
+            $db->query("DELETE FROM `user_activity_now` WHERE `user_id` = ".$db->real_escape_string($rUserID).";");
+            echo json_encode(Array("result" => True));exit;
+        } else {
+            echo json_encode(Array("result" => False));exit;
+        }
+    } else if ($_GET["action"] == "user_activity") {
+        $rPID = intval($_GET["pid"]);
+        $rSub = $_GET["sub"];
+        if ($rSub == "kill") {
+            exec("kill -9 ".$rPID);
+            $db->query("DELETE FROM `user_activity_now` WHERE `pid` = ".$db->real_escape_string($rPID).";");
+            echo json_encode(Array("result" => True));exit;
         } else {
             echo json_encode(Array("result" => False));exit;
         }
@@ -264,9 +283,9 @@ if (isset($_GET["action"])) {
             } else {
                 $rPage = 1;
             }
-            $rResult = $db->query("SELECT COUNT(`id`) AS `id` FROM `users` WHERE `username` LIKE '%".$db->real_escape_string($_GET["search"])."%';");
+            $rResult = $db->query("SELECT COUNT(`id`) AS `id` FROM `users` WHERE `username` LIKE '%".$db->real_escape_string($_GET["search"])."%' AND `is_e2` = 0 AND `is_mag` = 0;");
             $return["total_count"] = $rResult->fetch_assoc()["id"];
-            $rResult = $db->query("SELECT `id`, `username` FROM `users` WHERE `username` LIKE '%".$db->real_escape_string($_GET["search"])."%' ORDER BY `username` ASC LIMIT ".(($rPage-1) * 100).", 100;");
+            $rResult = $db->query("SELECT `id`, `username` FROM `users` WHERE `username` LIKE '%".$db->real_escape_string($_GET["search"])."%' AND `is_e2` = 0 AND `is_mag` = 0 ORDER BY `username` ASC LIMIT ".(($rPage-1) * 100).", 100;");
             if (($rResult) && ($rResult->num_rows > 0)) {
                 while ($rRow = $rResult->fetch_assoc()) {
                     $return["items"][] = Array("id" => $rRow["id"], "text" => $rRow["username"]);

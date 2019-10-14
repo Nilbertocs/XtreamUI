@@ -82,7 +82,7 @@ include "header.php"; ?>
                                     <a href="./enigmas.php"><li class="breadcrumb-item"><i class="mdi mdi-backspace"></i> Back to Enigma Devices</li></a>
                                 </ol>
                             </div>
-                            <h4 class="page-title"><?php if (isset($rE2Arr)) { echo "Edit"; } else { echo "Add"; } ?> Enigma Device</h4>
+                            <h4 class="page-title">Link Enigma User</h4>
                         </div>
                     </div>
                 </div>     
@@ -166,7 +166,7 @@ include "header.php"; ?>
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-12  text-center">Xtream Codes - Admin UI</div>
+                    <div class="col-md-12 copyright text-center"><?=getFooter()?></div>
                 </div>
             </div>
         </footer>

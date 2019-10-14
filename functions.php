@@ -16,6 +16,18 @@ include "./mobiledetect.php";
 $detect = new Mobile_Detect;
 
 $rStatusArray = Array(0 => "Stopped", 1 => "Running", 2 => "Starting", 3 => "<strong style='color:#cc9999'>DOWN</strong>", 4 => "On Demand", 5 => "Direct");
+$rSettings = json_decode(file_get_contents("/home/xtreamcodes/iptv_xtream_codes/adtools/settings.json"), True);
+
+function generateString($strength = 10) {
+    $input = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $input_length = strlen($input);
+    $random_string = '';
+    for($i = 0; $i < $strength; $i++) {
+        $random_character = $input[mt_rand(0, $input_length - 1)];
+        $random_string .= $random_character;
+    }
+    return $random_string;
+}
 
 function xor_parse($data, $key) {
     $i = 0;
@@ -40,15 +52,6 @@ $_INFO = json_decode(xor_parse(base64_decode(file_get_contents(MAIN_DIR . "confi
 if (!$db = new mysqli($_INFO["host"], $_INFO["db_user"], $_INFO["db_pass"], $_INFO["db_name"], $_INFO["db_port"])) { exit("No MySQL connection!"); } 
 $db->set_charset("utf8");
 date_default_timezone_set(getTimezone());
-
-function checkUpdate() {
-    global $rRelease;
-    if (intval(json_decode(file_get_contents("http://xtreamcodes.org/update/update.php"), True)["release"]) > $rRelease) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 function getStreamingServers() {
     global $db;
@@ -204,6 +207,26 @@ function getEPGSources() {
         }
     }
     return $return;
+}
+
+function findEPG($rEPGName) {
+    global $db;
+    $result = $db->query("SELECT `id`, `data` FROM `epg`;");
+    if (($result) && ($result->num_rows > 0)) {
+        while ($row = $result->fetch_assoc()) {
+            foreach (json_decode($row["data"], True) as $rChannelID => $rChannelData) {
+                if ($rChannelID == $rEPGName) {
+                    if (count($rChannelData["langs"]) > 0) {
+                        $rEPGLang = $rChannelData["langs"][0];
+                    } else {
+                        $rEPGLang = "";
+                    }
+                    return Array("channel_id" => $rChannelID, "epg_lang" => $rEPGLang, "epg_id" => intval($row["id"]));
+                }
+            }
+        }
+    }
+    return null;
 }
 
 function getStreamArguments() {
@@ -381,6 +404,15 @@ function getCategories($rType="live") {
     }
     return $return;
 }
+function getCategoriesByID($rID) {
+    global $db;
+    $return = Array();
+    $result = $db->query("SELECT * FROM `stream_categories` WHERE `id` = ".intval($rID).";");
+    if (($result) && ($result->num_rows == 1)) {
+        return $result->fetch_assoc();
+    }
+    return False;
+}
 
 function getChannels($rType="live") {
     global $db;
@@ -433,6 +465,24 @@ function getEnigma($rID) {
         return $row;
     }
     return Array();
+}
+
+function getMAGUser($rID) {
+    global $db;
+    $result = $db->query("SELECT `mac` FROM `mag_devices` WHERE `user_id` = ".intval($rID).";");
+    if (($result) && ($result->num_rows == 1)) {
+        return base64_decode($result->fetch_assoc()["mac"]);
+    }
+    return "";
+}
+
+function getE2User($rID) {
+    global $db;
+    $result = $db->query("SELECT `mac` FROM `enigma_devices` WHERE `user_id` = ".intval($rID).";");
+    if (($result) && ($result->num_rows == 1)) {
+        return $result->fetch_assoc()["mac"];
+    }
+    return "";
 }
 
 function cryptPassword($password, $salt="xtreamcodes", $rounds=20000) {
@@ -488,12 +538,23 @@ function secondsToTime($inputSeconds) {
     return $obj;
 }
 
+function getFooter() {
+    // Don't be a dick. Leave it.
+    global $rSettings;
+    return "Copyright &copy; 2019 - <a href=\"https://xtream-ui.com\">Xtream UI</a> R".$rSettings["version"]." - Free & Open Source Forever";
+}
+
 if (isset($_SESSION['user_id'])) {
+    $rCategoriesVOD = getCategories(movie);
     $rCategories = getCategories();
     $rServers = getStreamingServers();
     $rServerError = False;
     foreach ($rServers as $rServer) {
-        if ((($rServer["last_check_ago"] > 0) && ((time() - $rServer["last_check_ago"]) > 360)) OR ($rServer["status"] == 2)) { $rServerError = True; }
+        if (((((time() - $rServer["last_check_ago"]) > 360)) OR ($rServer["status"] == 2)) AND ($rServer["can_delete"] == 1) AND ($rServer["status"] <> 3)) { $rServerError = True; }
+        if (($rServer["status"] == 3) && ($rServer["last_check_ago"] > 0)) {
+            $db->query("UPDATE `streaming_servers` SET `status` = 1 WHERE `id` = ".intval($rServer["id"]).";");
+            $rServers[intval($rServer["id"])]["status"] = 1;
+        }
     }
 }
 ?>

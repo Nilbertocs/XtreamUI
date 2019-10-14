@@ -35,13 +35,6 @@ if ((isset($_POST["username"])) && (isset($_POST["password"]))) {
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             Incorrect username or password! Please try again.
                         </div>
-                        <?php } else if (checkUpdate()) { ?>
-                        <a href="http://xtreamcodes.org">
-                            <div class="alert alert-primary alert-dismissible bg-primary text-white border-0 fade show" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                A new update is available! Check it out now!.
-                            </div>
-                        </a>
                         <?php } ?>
                         <div class="card">
                             <div class="card-body p-4">

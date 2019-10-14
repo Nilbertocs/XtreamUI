@@ -194,9 +194,14 @@ include "header.php"; ?>
                                                     <li class="previous list-inline-item">
                                                         <a href="javascript: void(0);" class="btn btn-secondary">Previous</a>
                                                     </li>
-                                                    <li class="next list-inline-item float-right">
-                                                        <a href="javascript: void(0);" class="btn btn-secondary">Next</a>
-                                                    </li>
+                                                    <span class="float-right">
+                                                        <li class="list-inline-item">
+                                                            <a href="javascript: void(0);" onClick="toggleBouquets('datatable-streams')" class="btn btn-primary">Toggle Page</a>
+                                                        </li>
+                                                        <li class="next list-inline-item">
+                                                            <a href="javascript: void(0);" class="btn btn-secondary">Next</a>
+                                                        </li>
+                                                    </span>
                                                 </ul>
                                             </div>
                                             <div class="tab-pane" id="vod">
@@ -238,9 +243,14 @@ include "header.php"; ?>
                                                     <li class="previous list-inline-item">
                                                         <a href="javascript: void(0);" class="btn btn-secondary">Previous</a>
                                                     </li>
-                                                    <li class="next list-inline-item float-right">
-                                                        <a href="javascript: void(0);" class="btn btn-secondary">Next</a>
-                                                    </li>
+                                                    <span class="float-right">
+                                                        <li class="list-inline-item">
+                                                            <a href="javascript: void(0);" onClick="toggleBouquets('datatable-vod')" class="btn btn-primary">Toggle Page</a>
+                                                        </li>
+                                                        <li class="next list-inline-item">
+                                                            <a href="javascript: void(0);" class="btn btn-secondary">Next</a>
+                                                        </li>
+                                                    </span>
                                                 </ul>
                                             </div>
                                             <div class="tab-pane" id="series">
@@ -282,9 +292,14 @@ include "header.php"; ?>
                                                     <li class="previous list-inline-item">
                                                         <a href="javascript: void(0);" class="btn btn-secondary">Previous</a>
                                                     </li>
-                                                    <li class="next list-inline-item float-right">
-                                                        <a href="javascript: void(0);" class="btn btn-secondary">Next</a>
-                                                    </li>
+                                                    <span class="float-right">
+                                                        <li class="list-inline-item">
+                                                            <a href="javascript: void(0);" onClick="toggleBouquets('datatable-series')" class="btn btn-primary">Toggle Page</a>
+                                                        </li>
+                                                        <li class="next list-inline-item">
+                                                            <a href="javascript: void(0);" class="btn btn-secondary">Next</a>
+                                                        </li>
+                                                    </span>
                                                 </ul>
                                             </div>
                                             <div class="tab-pane" id="review">
@@ -332,7 +347,7 @@ include "header.php"; ?>
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-12  text-center">Xtream Codes - Admin UI</div>
+                    <div class="col-md-12 copyright text-center"><?=getFooter()?></div>
                 </div>
             </div>
         </footer>
@@ -419,6 +434,16 @@ include "header.php"; ?>
             if (rReview == true) {
                 reviewBouquet()
             }
+        }
+        
+        function toggleBouquets(rPage) {
+            $("#" + rPage + " tr").each(function() {
+                $(this).find("td:last-child button").each(function() {
+                    if ($(this).is(":visible")) {
+                        $(this).click();
+                    }
+                });
+            });
         }
         
         $(document).ready(function() {

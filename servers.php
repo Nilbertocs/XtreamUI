@@ -19,9 +19,16 @@ include "header.php";
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="server.php">
+                                        <a href="server.php" style="margin-right:10px;">
                                             <button type="button" class="btn btn-success waves-effect waves-light btn-sm">
                                                 <i class="mdi mdi-plus"></i> Add Server
+                                            </button>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="install_server.php">
+                                            <button type="button" class="btn btn-info waves-effect waves-light btn-sm">
+                                                <i class="mdi mdi-creation"></i> Install LB
                                             </button>
                                         </a>
                                     </li>
@@ -45,7 +52,6 @@ include "header.php";
                                             <th class="text-center">Status</th>
                                             <th>Domain Name</th>
                                             <th>Server IP</th>
-                                            <th>Server Port</th>
                                             <th class="text-center">Client Slots</th>
                                             <th>Operating System</th>
                                             <th class="text-center">Actions</th>
@@ -53,21 +59,26 @@ include "header.php";
                                     </thead>
                                     <tbody>
                                         <?php foreach ($rServers as $rServer) {
-                                        if (($rServer["last_check_ago"] > 0) && ((time() - $rServer["last_check_ago"]) > 360)) { $rServer["status"] = 2; } // Server Timeout
+                                        if (((time() - $rServer["last_check_ago"]) > 360) AND ($rServer["can_delete"] == 1) AND ($rServer["status"] <> 3)) { $rServer["status"] = 2; } // Server Timeout
                                         if (in_array($rServer["status"], Array(0,1))) {
                                             $rServerText = Array(0 => "Disabled", 1 => "Online")[$rServer["status"]];
-                                        } else {
-                                            $rServerText = "Offline for ".intval((time() - $rServer["last_check_ago"])/60)." minutes";
+                                        } else if ($rServer["status"] == 2) {
+                                            if ($rServer["last_check_ago"] > 0) {
+                                                $rServerText = "Offline for ".intval((time() - $rServer["last_check_ago"])/60)." minutes";
+                                            } else {
+                                                $rServerText = "Offline";
+                                            }
+                                        } else if ($rServer["status"] == 3) {
+                                            $rServerText = "Installing...";
                                         }
                                         ?>
                                         <tr id="server-<?=$rServer["id"]?>">
                                             <td class="text-center"><?=$rServer["id"]?></td>
                                             <td><?=$rServer["server_name"]?></td>
-                                            <td class="text-center" data-toggle="tooltip" data-placement="top" title="" data-original-title="<?=$rServerText?>" ><i class="<?php if ($rServer["status"] == 1) { echo "btn-outline-info"; } else { echo "btn-outline-danger"; } ?> mdi mdi-<?=Array(0 => "alarm-light-outline", 1 => "check-network", 2 => "alarm-light-outline")[$rServer["status"]]?>"></i></td>
+                                            <td class="text-center" data-toggle="tooltip" data-placement="top" title="" data-original-title="<?=$rServerText?>" ><i class="<?php if ($rServer["status"] == 1) { echo "btn-outline-success"; } else if ($rServer["status"] == "3") { echo "btn-outline-info"; } else { echo "btn-outline-danger"; } ?> mdi mdi-<?=Array(0 => "alarm-light-outline", 1 => "check-network", 2 => "alarm-light-outline", 3 => "creation")[$rServer["status"]]?>"></i></td>
                                             <td><?=$rServer["domain_name"]?></td>
                                             <td><?=$rServer["server_ip"]?></td>
-                                            <td><?=$rServer["http_broadcast_port"]?></td>
-                                            <td class="text-center"><?=count(getConnections($rServer["id"]))?> / <?=$rServer["total_clients"]?></td>
+                                            <td class="text-center"><a href="./user_activity.php?server_id=<?=$rServer["id"]?>"><?=count(getConnections($rServer["id"]))?> / <?=$rServer["total_clients"]?></a></td>
                                             <td><?=$rServer["system_os"]?></td>
                                             <td class="text-center">
                                                 <a href="./server.php?id=<?=$rServer["id"]?>"><button type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit Server" class="btn btn-outline-info waves-effect waves-light btn-xs"><i class="mdi mdi-pencil-outline"></i></button></a>
@@ -92,7 +103,7 @@ include "header.php";
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-12  text-center">Xtream Codes - Admin UI</div>
+                    <div class="col-md-12 copyright text-center"><?=getFooter()?></div>
                 </div>
             </div>
         </footer>

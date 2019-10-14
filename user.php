@@ -9,6 +9,12 @@ if (isset($_POST["submit_user"])) {
     } else {
         $rArray = Array("member_id" => 0, "username" => "", "password" => "", "exp_date" => null, "admin_enabled" => 1, "enabled" => 1, "admin_notes" => "", "reseller_notes" => "", "bouquet" => Array(), "max_connections" => 1, "is_restreamer" => 0, "allowed_ips" => Array(), "allowed_ua" => Array(), "created_at" => time(), "created_by" => -1, "is_mag" => 0, "is_e2" => 0, "force_server_id" => 0, "is_isplock" => 0, "isp_desc" => "", "forced_country" => "", "is_stalker" => 0, "bypass_ua" => 0, "play_token" => "");
     }
+    if (strlen($_POST["username"]) == 0) {
+        $_POST["username"] = generateString(10);
+    }
+    if (strlen($_POST["password"]) == 0) {
+        $_POST["password"] = generateString(10);
+    }
     foreach (Array("max_connections", "enabled", "admin_enabled") as $rSelection) {
         if (isset($_POST[$rSelection])) {
             $rArray[$rSelection] = intval($_POST[$rSelection]);
@@ -82,6 +88,30 @@ if (isset($_POST["submit_user"])) {
                 foreach ($_POST["access_output"] as $rOutputID) {
                     $db->query("INSERT INTO `user_output`(`user_id`, `access_output_id`) VALUES(".intval($rInsertID).", ".intval($rOutputID).");");
                 }
+                if ($rArray["is_mag"] == 1) {
+                    $result = $db->query("SELECT `mag_id` FROM `mag_devices` WHERE `user_id` = ".intval($rInsertID)." LIMIT 1;");
+                    if ((isset($result)) && ($result->num_rows == 1)) {
+                        $db->query("UPDATE `mag_devices` SET `mac` = '".base64_encode($db->real_escape_string($_POST["mac_address_mag"]))."' WHERE `user_id` = ".intval($rInsertID).";");
+                    } else {
+                        $db->query("INSERT INTO `mag_devices`(`user_id`, `mac`) VALUES(".intval($rInsertID).", '".$db->real_escape_string(base64_encode($_POST["mac_address_mag"]))."');");
+                    }
+                    if (isset($_POST["edit"])) {
+                        $db->query("DELETE FROM `enigma2_devices` WHERE `user_id` = ".intval($rInsertID).";");
+                    }
+                } else if ($rArray["is_e2"] == 1) {
+                    $result = $db->query("SELECT `device_id` FROM `enigma2_devices` WHERE `user_id` = ".intval($rInsertID)." LIMIT 1;");
+                    if ((isset($result)) && ($result->num_rows == 1)) {
+                        $db->query("UPDATE `enigma2_devices` SET `mac` = '".$db->real_escape_string($_POST["mac_address_mag"])."' WHERE `user_id` = ".intval($rInsertID).";");
+                    } else {
+                        $db->query("INSERT INTO `enigma2_devices`(`user_id`, `mac`) VALUES(".intval($rInsertID).", '".$db->real_escape_string($_POST["mac_address_mag"])."');");
+                    }
+                    if (isset($_POST["edit"])) {
+                        $db->query("DELETE FROM `mag_devices` WHERE `user_id` = ".intval($rInsertID).";");
+                    }
+                } else if (isset($_POST["edit"])) {
+                    $db->query("DELETE FROM `mag_devices` WHERE `user_id` = ".intval($rInsertID).";");
+                    $db->query("DELETE FROM `enigma2_devices` WHERE `user_id` = ".intval($rInsertID).";");
+                }
             }
             $_STATUS = 0;
         } else {
@@ -98,6 +128,8 @@ if (isset($_GET["id"])) {
     if (!$rUser) {
         exit;
     }
+    $rUser["mac_address_mag"] = getMAGUser($_GET["id"]);
+    $rUser["mac_address_e2"] = getE2User($_GET["id"]);
     $rUser["outputs"] = getOutputs($rUser["id"]);
 }
 $rRegisteredUsers = getRegisteredUsers();
@@ -173,17 +205,17 @@ include "header.php"; ?>
                                                         <div class="form-group row mb-4">
                                                             <label class="col-md-4 col-form-label" for="username">Username</label>
                                                             <div class="col-md-8">
-                                                                <input type="text" class="form-control" id="username" name="username" value="<?php if (isset($rUser)) { echo $rUser["username"]; } ?>">
+                                                                <input type="text" class="form-control" id="username" name="username" placeholder="auto-generate if blank" value="<?php if (isset($rUser)) { echo $rUser["username"]; } ?>">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-4">
                                                             <label class="col-md-4 col-form-label" for="password">Password</label>
                                                             <div class="col-md-8">
-                                                                <input type="text" class="form-control" id="password" name="password" value="<?php if (isset($rUser)) { echo $rUser["password"]; } ?>">
+                                                                <input type="text" class="form-control" id="password" name="password" placeholder="auto-generate if blank" value="<?php if (isset($rUser)) { echo $rUser["password"]; } ?>">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-4">
-                                                            <label class="col-md-4 col-form-label" for="member_id">Member ID</label>
+                                                            <label class="col-md-4 col-form-label" for="member_id">Owner</label>
                                                             <div class="col-md-8">
                                                                 <select name="member_id" id="member_id" class="form-control select2" data-toggle="select2">
                                                                     <?php foreach ($rRegisteredUsers as $rRegisteredUser) { ?>
@@ -249,13 +281,13 @@ include "header.php"; ?>
                                                             </div>
                                                             <label class="col-md-4 col-form-label" for="is_mag">MAG Device <i data-toggle="tooltip" data-placement="top" title="" data-original-title="This option will be selected if this device is a MAG set top box. This will be a sub account and should not be modified directly." class="mdi mdi-information"></i></label>
                                                             <div class="col-md-2">
-                                                                <input name="is_mag" id="is_mag" type="checkbox" <?php if (isset($rUser)) { if ($rUser["is_mag"] == 1) { echo "checked "; } } ?>data-plugin="switchery" class="js-switch" data-color="#039cfd"/>
+                                                                <input name="is_mag" id="is_mag" type="checkbox" <?php if (isset($rUser)) { if ($rUser["is_mag"] == 1) { echo "checked "; } } else if (isset($_GET["mag"])) { echo "checked "; } ?>data-plugin="switchery" class="js-switch" data-color="#039cfd"/>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-4">
                                                             <label class="col-md-4 col-form-label" for="is_e2">Enigma Device <i data-toggle="tooltip" data-placement="top" title="" data-original-title="This option will be selected if this device is a Enigma set top box. This will be a sub account and should not be modified directly." class="mdi mdi-information"></i></label>
                                                             <div class="col-md-2">
-                                                                <input name="is_e2" id="is_e2" type="checkbox" <?php if (isset($rUser)) { if ($rUser["is_e2"] == 1) { echo "checked "; } } ?>data-plugin="switchery" class="js-switch" data-color="#039cfd"/>
+                                                                <input name="is_e2" id="is_e2" type="checkbox" <?php if (isset($rUser)) { if ($rUser["is_e2"] == 1) { echo "checked "; } } else if (isset($_GET["e2"])) { echo "checked "; } ?>data-plugin="switchery" class="js-switch" data-color="#039cfd"/>
                                                             </div>
                                                             <label class="col-md-4 col-form-label" for="is_restreamer">Restreamer <i data-toggle="tooltip" data-placement="top" title="" data-original-title="If selected, this user will not be blocked for restreaming channels." class="mdi mdi-information"></i></label>
                                                             <div class="col-md-2">
@@ -266,6 +298,18 @@ include "header.php"; ?>
                                                             <label class="col-md-4 col-form-label" for="is_trial">Trial Account</label>
                                                             <div class="col-md-2">
                                                                 <input name="is_trial" id="is_trial" type="checkbox" <?php if (isset($rUser)) { if ($rUser["is_trial"] == 1) { echo "checked "; } } ?>data-plugin="switchery" class="js-switch" data-color="#039cfd"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row mb-4" style="display:none" id="mac_entry_mag">
+                                                            <label class="col-md-4 col-form-label" for="mac_address_mag">MAC Address</label>
+                                                            <div class="col-md-8">
+                                                                <input type="text" class="form-control" id="mac_address_mag" name="mac_address_mag" value="<?php if (isset($rUser)) { echo $rUser["mac_address_mag"]; } else { echo "00:1A:79:"; } ?>">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row mb-4" style="display:none" id="mac_entry_e2">
+                                                            <label class="col-md-4 col-form-label" for="mac_address_e2">MAC Address</label>
+                                                            <div class="col-md-8">
+                                                                <input type="text" class="form-control" id="mac_address_e2" name="mac_address_e2" value="<?php if (isset($rUser)) { echo $rUser["mac_address_e2"]; } ?>">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-4">
@@ -343,7 +387,7 @@ include "header.php"; ?>
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-12  text-center">Xtream Codes - Admin UI</div>
+                    <div class="col-md-12 copyright text-center"><?=getFooter()?></div>
                 </div>
             </div>
         </footer>
@@ -373,6 +417,8 @@ include "header.php"; ?>
         <script src="assets/js/app.min.js"></script>
         
         <script>
+        var swObjs = {};
+        
         (function($) {
           $.fn.inputFilter = function(inputFilter) {
             return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function() {
@@ -407,14 +453,29 @@ include "header.php"; ?>
               if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
               return d.toISOString().slice(0,10) === dateString;
         }
+        function evaluateForm() {
+            if (($("#is_mag").is(":checked")) || ($("#is_e2").is(":checked"))) {
+                if ($("#is_mag").is(":checked")) {
+                    $("#mac_entry_mag").show();
+                    window.swObjs["is_e2"].disable();
+                } else {
+                    $("#mac_entry_e2").show();
+                    window.swObjs["is_mag"].disable();
+                }
+            } else {
+                $("#mac_entry_mag").hide();
+                $("#mac_entry_e2").hide();
+                window.swObjs["is_e2"].enable();
+                window.swObjs["is_mag"].enable();
+            }
+        }
         
         $(document).ready(function() {
             $('select.select2').select2({width: '100%'})
-            var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
-            elems.forEach(function(html) {
-              var switchery = new Switchery(html);
+            $(".js-switch").each(function (index, element) {
+                var init = new Switchery(element);
+                window.swObjs[element.id] = init;
             });
-            
             $('#exp_date').daterangepicker({
                 singleDatePicker: true,
                 showDropdowns: true,
@@ -432,6 +493,10 @@ include "header.php"; ?>
                 }
             });
             
+            $(".js-switch").on("change" , function() {
+                evaluateForm();
+            });
+            
             $(document).keypress(function(event){
                 if (event.which == '13') {
                     event.preventDefault();
@@ -440,6 +505,8 @@ include "header.php"; ?>
             
             $("#max_connections").inputFilter(function(value) { return /^\d*$/.test(value); });
             $("form").attr('autocomplete', 'off');
+            
+            evaluateForm();
         });
         </script>
     </body>

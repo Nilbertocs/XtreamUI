@@ -82,7 +82,7 @@ include "header.php"; ?>
                                     <a href="./mags.php"><li class="breadcrumb-item"><i class="mdi mdi-backspace"></i> Back to MAG Devices</li></a>
                                 </ol>
                             </div>
-                            <h4 class="page-title"><?php if (isset($rMagArr)) { echo "Edit"; } else { echo "Add"; } ?> MAG Device</h4>
+                            <h4 class="page-title">Link MAG User</h4>
                         </div>
                     </div>
                 </div>     
@@ -166,7 +166,7 @@ include "header.php"; ?>
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-12  text-center">Xtream Codes - Admin UI</div>
+                    <div class="col-md-12 copyright text-center"><?=getFooter()?></div>
                 </div>
             </div>
         </footer>

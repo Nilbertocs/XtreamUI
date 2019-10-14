@@ -41,7 +41,7 @@
                         <li class="dropdown notification-list">
                             <!-- Mobile menu toggle-->
                             <a class="navbar-toggle nav-link">
-                                <div class="lines">
+                                <div class="lines text-white">
                                     <span></span>
                                     <span></span>
                                     <span></span>
@@ -51,18 +51,18 @@
                         </li>
                         <?php if ($rServerError) { ?>
                         <li class="notification-list">
-                            <a href="./servers.php" class="nav-link right-bar-toggle waves-effect text-danger">
+                            <a href="./servers.php" class="nav-link right-bar-toggle waves-effect text-warning">
                                 <i class="mdi mdi-wifi-strength-off noti-icon"></i>
                             </a>
                         </li>
                         <?php } ?>
                         <li class="notification-list">
-                            <a href="./settings.php" class="nav-link right-bar-toggle waves-effect">
+                            <a href="./settings.php" class="nav-link right-bar-toggle waves-effect text-white">
                                 <i class="fe-settings noti-icon"></i>
                             </a>
                         </li>
                         <li class="notification-list">
-                            <a href="./logout.php" class="nav-link right-bar-toggle waves-effect">
+                            <a href="./logout.php" class="nav-link right-bar-toggle waves-effect text-white">
                                 <i class="fe-power noti-icon"></i>
                             </a>
                         </li>
@@ -72,12 +72,10 @@
                     <div class="logo-box">
                         <a href="dashboard.php" class="logo text-center">
                             <span class="logo-lg">
-                                <img src="assets/images/logo-back.png" alt="" height="26">
-                                <!-- <span class="logo-lg-text-dark">Upvex</span> -->
+                                <img src="assets/images/logo.png" alt="" height="26">
                             </span>
                             <span class="logo-sm">
-                                <!-- <span class="logo-sm-text-dark">X</span> -->
-                                <img src="assets/images/logo-back.png" alt="" height="28">
+                                <img src="assets/images/logo.png" alt="" height="28">
                             </span>
                         </a>
                     </div>
@@ -92,32 +90,18 @@
                         <!-- Navigation Menu-->
                         <ul class="navigation-menu">
 
-                            <li class="has-submenu">
-                                <a href="#"><i class="la la-dashboard"></i>Dashboard <div class="arrow-down"></div></a>
-                                <ul class="submenu megamenu">
-                                    <li>
-                                        <ul>
-                                            <li><a href="./dashboard.php">Server Overview</a></li>
-                                            <?php $i = 0; foreach ($rServers as $rServer) { $i ++; ?>
-                                            <li><a href="./dashboard.php?server_id=<?=$rServer["id"]?>"><?=$rServer["server_name"]?></a></li>
-                                            <?php if ($i == 12) {
-                                                    echo "</ul></li><li><ul>";
-                                                    $i = 0;
-                                                }
-                                            }
-                                            ?>
-                                        </ul>
-                                    </li>
-                                </ul>
+                            <li>
+                                <a href="./dashboard.php"><i class="la la-dashboard"></i>Dashboard</a>
                             </li>
 
                             <li class="has-submenu">
                                 <a href="#"><i class="la la-server"></i>Servers <div class="arrow-down"></div></a>
                                 <ul class="submenu">
                                     <li><a href="./server.php">Add Server</a></li>
+                                    <li><a href="./install_server.php">Install Load Balancer</a></li>
                                     <li><a href="./servers.php">Manage Servers</a></li>
                                     <li class="separator"></li>
-                                    <li><a href="#">Live Connections <i class="la la-exclamation-triangle"></i></a></li>
+                                    <li><a href="./live_connections.php">Live Connections</a></li>
                                 </ul>
                             </li>
 
@@ -132,18 +116,19 @@
                                     <li><a href="#">Manage Group Members <i class="la la-exclamation-triangle"></i></a></li>
                                     <li class="separator"></li>
                                     <li><a href="#">Client Logs <i class="la la-exclamation-triangle"></i></a></li>
-                                    <li><a href="./user_activity.php">User Activity</a></li>
                                 </ul>
                             </li>
                             
                             <li class="has-submenu">
                                 <a href="#"> <i class="la la-tablet"></i>Devices <div class="arrow-down"></div></a>
                                 <ul class="submenu">
-                                    <li><a href="./mag.php">Add MAG Device</a></li>
+                                    <li><a href="./user.php?mag">Add MAG User</a></li>
+                                    <li><a href="./mag.php">Link MAG User</a></li>
                                     <li><a href="./mags.php">Manage MAG Devices</a></li>
                                     <li><a href="./mag_events.php">Manage MAG Events</a></li>
                                     <li class="separator"></li>
-                                    <li><a href="./enigma.php">Add Enigma Device</a></li>
+                                    <li><a href="./user.php?e2">Add Enigma User</a></li>
+                                    <li><a href="./enigma.php">Link MAG User</a></li>
                                     <li><a href="./enigmas.php">Manage Enigma Devices</a></li>
                                 </ul>
                             </li>
@@ -162,7 +147,7 @@
                                 <a href="#"> <i class="la la-video-camera"></i>VOD <div class="arrow-down"></div></a>
                                 <ul class="submenu">
                                     <li><a href="./addvod.php">Add Movie</a></li>
-                                    <li><a href="#">Manage Movies <i class="la la-exclamation-triangle"></i></a></li>
+                                    <li><a href="./vods.php">Manage Movies</a></li>
                                     <li class="separator"></li>
                                     <li><a href="./movie_category.php">Add Movie Category</a></li>
                                     <li><a href="./movie_categories.php">Manage Movie Categories</a></li>
@@ -195,6 +180,7 @@
                                 <a href="#"> <i class="la la-play-circle-o"></i>Streams <div class="arrow-down"></div></a>
                                 <ul class="submenu">
                                     <li><a href="./stream.php">Add Stream</a></li>
+                                    <li><a href="./stream.php?import">Import Streams</a></li>
                                     <?php if (count($rCategories) > 0) { ?>
                                     <li><a href="#" data-toggle="modal" data-target="#streamCategories">Manage Streams</a></li>
                                     <?php } ?>

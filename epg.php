@@ -115,7 +115,7 @@ include "header.php"; ?>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-4">
-                                                            <label class="col-md-4 col-form-label" for="epg_file">EPG URL</label>
+                                                            <label class="col-md-4 col-form-label" for="epg_file">Source</label>
                                                             <div class="col-md-8">
                                                                 <input type="text" class="form-control" id="epg_file" name="epg_file" value="<?php if (isset($rEPGArr)) { echo $rEPGArr["epg_file"]; } ?>">
                                                             </div>
@@ -178,7 +178,7 @@ include "header.php"; ?>
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-12  text-center">Xtream Codes - Admin UI</div>
+                    <div class="col-md-12 copyright text-center"><?=getFooter()?></div>
                 </div>
             </div>
         </footer>

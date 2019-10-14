@@ -41,6 +41,7 @@ include "header.php";
                                         <tr>
                                             <th class="text-center">ID</th>
                                             <th>EPG Name</th>
+                                            <th>Source</th>
                                             <th class="text-center">Days to Keep</th>
                                             <th class="text-center">Last Updated</th>
                                             <th class="text-center">Actions</th>
@@ -52,6 +53,7 @@ include "header.php";
                                         <tr id="server-<?=$rEPG["id"]?>">
                                             <td class="text-center"><?=$rEPG["id"]?></td>
                                             <td><?=$rEPG["epg_name"]?></td>
+                                            <td><?=$rEPG["epg_file"]?></td>
                                             <td class="text-center"><?=$rEPG["days_keep"]?></td>
                                             <td class="text-center"><?php if ($rEPG["last_updated"]) { echo date("Y-m-d H:i:s", $rEPG["last_updated"]); } else { echo "Never"; } ?></td>
                                             <td class="text-center">
@@ -74,7 +76,7 @@ include "header.php";
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-12  text-center">Xtream Codes - Admin UI</div>
+                    <div class="col-md-12 copyright text-center"><?=getFooter()?></div>
                 </div>
             </div>
         </footer>

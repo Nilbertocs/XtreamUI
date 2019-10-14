@@ -400,6 +400,42 @@ if ($_GET["id"] == "users") {
             }
         )
     );
+}else if ($_GET["id"] == "vods") {
+    $rStreamInformation = Array();
+    $table = 'streams';
+    $get = $_GET["id"];
+    $primaryKey = 'id';
+    if ((isset($_GET["category"])) && (strlen($_GET["category"]) > 0)) {
+        $extraWhere = "`type` = 2 AND `category_id` = ".intval($_GET["category"]);
+    } else if ((isset($_GET["stream_id"])) && (strlen($_GET["stream_id"]) > 0)) {
+        $extraWhere = "`type` = 2 AND `id` = '".$db->real_escape_string($_GET["stream_id"])."'";
+    } else {
+        $extraWhere = "`type` = 2";
+    }
+    $columns = array(
+        array('db' => 'id', 'dt' => 0,
+            'formatter' => function( $d, $row, $server ) {
+                return $d;
+            }
+        ),
+        array('db' => 'stream_display_name', 'dt' => 1),
+        array('db' => 'category_id', 'dt' => 2,
+            'formatter' => function( $d, $row, $server ) {
+                global $rCategoriesVOD;
+                return $rCategoriesVOD[$d]["category_name"];
+            }
+        ),
+        
+        array('db' => 'id', 'dt' => 3,
+            'formatter' => function( $d, $row, $server ) {
+                if ((intval($server["actual_status"]) == 1) OR ($server["on_demand"] == 1) OR ($server["actual_status"] == 5)) { $rStatusA = " style=\"display:none;\""; } else { $rStatusA = ""; }
+                if (intval($server["actual_status"]) <> 1) { $rStatusB = " style=\"display:none;\""; } else { $rStatusB = ""; }
+                if (!$server["server_id"]) { $server["server_id"] = 0; }
+                return '<a href="./addvod.php?id='.$d.'"><button type="button" class="btn btn-outline-info waves-effect waves-light btn-xs"><i class="mdi mdi-pencil-outline"></i></button></a>
+                <button type="button" class="btn btn-outline-danger waves-effect waves-light btn-xs" onClick="api('.$d.', '.$server["server_id"].', \'delete\');"><i class="mdi mdi-close"></i></button>';
+            }
+        )
+    );
 } else if ($_GET["id"] == "bouquets_streams") {
     $table = 'streams';
     $get = $_GET["id"];
@@ -542,6 +578,23 @@ class SSP {
         for ( $i=0, $ien=count($data) ; $i<$ien ; $i++ ) {
             $row = array();
             if ($get == "streams") {
+                $rStreamInformation[intval($data[$i]["id"])] = getStreams(null, true, Array($data[$i]["id"]))[0];
+                if (count($rStreamInformation[intval($data[$i]["id"])]["servers"]) == 0) {
+                    $rStreamInformation[intval($data[$i]["id"])]["servers"][] = Array("id" => 0, "active_count" => 0, "stream_text" => "Not Available", "uptime_text" => "--", "actual_status" => 0);
+                }
+                foreach ($rStreamInformation[intval($data[$i]["id"])]["servers"] as $rServer) {
+                    for ( $j=0, $jen=count($columns) ; $j<$jen ; $j++ ) {
+                        $column = $columns[$j];
+                        // Is there a formatter?
+                        if ( isset( $column['formatter'] ) ) {
+                            $row[ $column['dt'] ] = ($isJoin) ? $column['formatter']( $data[$i][ $column['field'] ], $data[$i], $rServer ) : $column['formatter']( $data[$i][ $column['db'] ], $data[$i], $rServer );
+                        } else if (!isset($column["hide"])) {
+                            $row[ $column['dt'] ] = ($isJoin) ? $data[$i][ $columns[$j]['field'] ] : $data[$i][ $columns[$j]['db'] ];
+                        }
+                    }
+                    $out[] = $row;
+                }
+            }else if ($get == "vods") {
                 $rStreamInformation[intval($data[$i]["id"])] = getStreams(null, true, Array($data[$i]["id"]))[0];
                 if (count($rStreamInformation[intval($data[$i]["id"])]["servers"]) == 0) {
                     $rStreamInformation[intval($data[$i]["id"])]["servers"][] = Array("id" => 0, "active_count" => 0, "stream_text" => "Not Available", "uptime_text" => "--", "actual_status" => 0);

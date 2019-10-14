@@ -16,8 +16,7 @@ include "./mobiledetect.php";
 $detect = new Mobile_Detect;
 
 $rStatusArray = Array(0 => "Stopped", 1 => "Running", 2 => "Starting", 3 => "<strong style='color:#cc9999'>DOWN</strong>", 4 => "On Demand", 5 => "Direct");
-$rAdminSettingsPath = "/home/xtreamcodes/iptv_xtream_codes/adtools/settings.json";
-$rAdminSettings = json_decode(file_get_contents($rAdminSettingsPath), True);
+$rSettings = json_decode(file_get_contents("/home/xtreamcodes/iptv_xtream_codes/adtools/settings.json"), True);
 
 function generateString($strength = 10) {
     $input = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -382,15 +381,6 @@ function getBouquets() {
     return $return;
 }
 
-function getBouquet($rID) {
-    global $db;
-    $result = $db->query("SELECT * FROM `bouquets` WHERE `id` = ".intval($rID).";");
-    if (($result) && ($result->num_rows == 1)) {
-        return $result->fetch_assoc();
-    }
-    return null;
-}
-
 function getEPGs() {
     global $db;
     $return = Array();
@@ -539,19 +529,14 @@ function secondsToTime($inputSeconds) {
     return $obj;
 }
 
-function writeAdminSettings() {
-    global $rAdminSettings, $rAdminSettingsPath;
-    file_put_contents($rAdminSettingsPath, json_encode($rAdminSettings));
-}
-
 function getFooter() {
     // Don't be a dick. Leave it.
-    global $rAdminSettings;
-    return "Copyright &copy; 2019 - <a href=\"https://xtream-ui.com\">Xtream UI</a> R".$rAdminSettings["version"]." - Free & Open Source Forever";
+    global $rSettings;
+    return "Copyright &copy; 2019 - <a href=\"https://xtream-ui.com\">Xtream UI</a> R".$rSettings["version"]." - Free & Open Source Forever";
 }
 
 if (isset($_SESSION['user_id'])) {
-    $rSettings = getSettings();
+    $rCategoriesVOD = getCategories(movie);
     $rCategories = getCategories();
     $rServers = getStreamingServers();
     $rServerError = False;

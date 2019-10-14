@@ -23,6 +23,7 @@
         <link href="assets/libs/clockpicker/bootstrap-clockpicker.min.css" rel="stylesheet" type="text/css" />
         <link href="assets/libs/daterangepicker/daterangepicker.css" rel="stylesheet" type="text/css" />
         <link href="assets/libs/nestable2/jquery.nestable.min.css" rel="stylesheet" />
+        <link href="assets/libs/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
         <!-- third party css end -->
 
         <!-- App css -->
@@ -146,8 +147,8 @@
                             <li class="has-submenu">
                                 <a href="#"> <i class="la la-video-camera"></i>VOD <div class="arrow-down"></div></a>
                                 <ul class="submenu">
-                                    <li><a href="./addvod.php">Add Movie</a></li>
-                                    <li><a href="./vods.php">Manage Movies </a></li>
+                                    <li><a href="#">Add Movie <i class="la la-exclamation-triangle"></i></a></li>
+                                    <li><a href="#">Manage Movies <i class="la la-exclamation-triangle"></i></a></li>
                                     <li class="separator"></li>
                                     <li><a href="./movie_category.php">Add Movie Category</a></li>
                                     <li><a href="./movie_categories.php">Manage Movie Categories</a></li>

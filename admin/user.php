@@ -101,9 +101,9 @@ if (isset($_POST["submit_user"])) {
                 } else if ($rArray["is_e2"] == 1) {
                     $result = $db->query("SELECT `device_id` FROM `enigma2_devices` WHERE `user_id` = ".intval($rInsertID)." LIMIT 1;");
                     if ((isset($result)) && ($result->num_rows == 1)) {
-                        $db->query("UPDATE `enigma2_devices` SET `mac` = '".$db->real_escape_string($_POST["mac_address_mag"])."' WHERE `user_id` = ".intval($rInsertID).";");
+                        $db->query("UPDATE `enigma2_devices` SET `mac` = '".$db->real_escape_string($_POST["mac_address_e2"])."' WHERE `user_id` = ".intval($rInsertID).";");
                     } else {
-                        $db->query("INSERT INTO `enigma2_devices`(`user_id`, `mac`) VALUES(".intval($rInsertID).", '".$db->real_escape_string($_POST["mac_address_mag"])."');");
+                        $db->query("INSERT INTO `enigma2_devices`(`user_id`, `mac`) VALUES(".intval($rInsertID).", '".$db->real_escape_string($_POST["mac_address_e2"])."');");
                     }
                     if (isset($_POST["edit"])) {
                         $db->query("DELETE FROM `mag_devices` WHERE `user_id` = ".intval($rInsertID).";");

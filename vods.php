@@ -93,7 +93,7 @@ include "header.php";
         <script src="assets/libs/jquery-toast/jquery.toast.min.js"></script>
 
         <script>
-        var autoRefresh = true;
+        var autoRefresh = false;
         
         function toggleAuto() {
             if (autoRefresh == true) {

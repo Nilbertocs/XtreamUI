@@ -404,15 +404,6 @@ function getCategories($rType="live") {
     }
     return $return;
 }
-function getCategoriesByID($rID) {
-    global $db;
-    $return = Array();
-    $result = $db->query("SELECT * FROM `stream_categories` WHERE `id` = ".intval($rID).";");
-    if (($result) && ($result->num_rows == 1)) {
-        return $result->fetch_assoc();
-    }
-    return False;
-}
 
 function getChannels($rType="live") {
     global $db;

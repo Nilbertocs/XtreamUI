@@ -147,7 +147,7 @@
                                 <a href="#"> <i class="la la-video-camera"></i>VOD <div class="arrow-down"></div></a>
                                 <ul class="submenu">
                                     <li><a href="./addvod.php">Add Movie</a></li>
-                                    <li><a href="./vods.php">Manage Movies</a></li>
+                                    <li><a href="./vods.php">Manage Movies </a></li>
                                     <li class="separator"></li>
                                     <li><a href="./movie_category.php">Add Movie Category</a></li>
                                     <li><a href="./movie_categories.php">Manage Movie Categories</a></li>

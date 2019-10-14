@@ -189,7 +189,7 @@ include "header.php"; ?>
                                     <a href="./vodstreams.php<?php if (isset($_GET["category"])) { echo "?category=".$_GET["category"]; } ?>"><li class="breadcrumb-item"><i class="mdi mdi-backspace"></i> Back to Streams</li></a>
                                 </ol>
                             </div>
-                            <h4 class="page-title"><?php if (isset($rStream)) { echo "Edit"; } else { echo "Add"; } ?> VOD</h4>
+                            <h4 class="page-title"><?php if (isset($rStream)) { echo "Edit"; } else { echo "Add"; } ?> Movie</h4>
                         </div>
                     </div>
                 </div>     

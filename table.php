@@ -420,9 +420,10 @@ if ($_GET["id"] == "users") {
         ),
         array('db' => 'stream_display_name', 'dt' => 1),
         array('db' => 'category_id', 'dt' => 2,
-        'formatter' => function( $d, $row ) {
-            return getCategoriesByID(intval($d))["category_name"];
-        }
+            'formatter' => function( $d, $row, $server ) {
+                global $rCategoriesVOD;
+                return $rCategoriesVOD[$d]["category_name"];
+            }
         ),
         
         array('db' => 'id', 'dt' => 3,

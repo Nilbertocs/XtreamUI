@@ -420,10 +420,9 @@ if ($_GET["id"] == "users") {
         ),
         array('db' => 'stream_display_name', 'dt' => 1),
         array('db' => 'category_id', 'dt' => 2,
-            'formatter' => function( $d, $row, $server ) {
-                global $rCategoriesVOD;
-                return $rCategoriesVOD[$d]["category_name"];
-            }
+        'formatter' => function( $d, $row ) {
+            return getCategoriesByID(intval($d))["category_name"];
+        }
         ),
         
         array('db' => 'id', 'dt' => 3,
@@ -518,8 +517,8 @@ if ($_GET["id"] == "users") {
         ),
         array('db' => 'id', 'dt' => 3,
             'formatter' => function( $d, $row) {
-                return '<button type="button" style="display: none;" class="btn-remove btn btn-outline-danger waves-effect waves-light btn-xs" onClick="toggleBouquet('.$d.', \'vod\');"><i class="mdi mdi-minus"></i></button>
-                <button type="button" style="display: none;" class="btn-add btn btn-outline-info waves-effect waves-light btn-xs" onClick="toggleBouquet('.$d.', \'vod\');"><i class="mdi mdi-plus"></i></button>';
+                return '<button type="button" style="display: none;" class="btn-remove btn btn-outline-danger waves-effect waves-light btn-xs" onClick="toggleBouquet('.$d.', \'stream\');"><i class="mdi mdi-minus"></i></button>
+                <button type="button" style="display: none;" class="btn-add btn btn-outline-info waves-effect waves-light btn-xs" onClick="toggleBouquet('.$d.', \'stream\');"><i class="mdi mdi-plus"></i></button>';
             }
         )
     );
